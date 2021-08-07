@@ -5,7 +5,7 @@ const converter = require('./src/convert');
 
 const defaultIgnoreFuncs = ['console.log', 'console.warn', 'console.error'];
 const defaultI18nFunc = 'window.$i18n';
-const cache = {}
+const cache = {};
 
 module.exports = function(source) {
   const options = loaderUtils.getOptions(this) || {};

@@ -10,12 +10,15 @@ const { isAddNode } = require('./utils/nodeHelper');
 
 const allLangs = {};
 const hasChinese = str => /[\u4E00-\u9FFF]+/g.test((str || '').toString());
+let uploadTimer = null;
 
-module.exports.handle = (source, file, {
-  genKeyFunc, ignoreFuncs, i18nFunc, fileType, filePath
-}) => {
+module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, fileType, filePath }) => {
   const langs = {};
-  const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
+  const ast = parser.parse(source, {
+    allowImportExportEverywhere: true,
+    plugins: ['classProperties', 'decorators-legacy']
+  });
+
   traverse(ast, {
     StringLiteral(path) {
       const paramStr = path.node.value;
@@ -55,7 +58,8 @@ module.exports.handle = (source, file, {
   });
 
   if (Object.keys(langs).length <= 0) return source;
-
+  
+  uploadStarling(allLangs);
   Object.assign(allLangs, langs);
   genFile(fileType, filePath, allLangs).catch(error => {
     console.error(`[${package.name}] 文件 ${file} 国际化失败！${error.message || ''}`);
@@ -121,4 +125,14 @@ const replaceNode = (path, i18nFunc, { key, paramNode, paramStr }) => {
   }
 
   path.parent[path.parentKey] = node;
+}
+
+const uploadStarling = (langs) => {
+  clearTimeout(uploadTimer);
+  return new Promise(r => {
+    uploadTimer = setTimeout(() => {
+      console.log('will upload to starling:', langs, '***********************');
+      r();
+    }, 3000);
+  })
 }
