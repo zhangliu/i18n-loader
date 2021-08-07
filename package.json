@@ -15,7 +15,10 @@
   "dependencies": {
     "@babel/generator": "^7.15.0",
     "@babel/parser": "^7.15.0",
+    "@babel/types": "^7.15.0",
     "babel-traverse": "^6.26.0",
-    "loader-utils": "^2.0.0"
+    "loader-utils": "^2.0.0",
+    "node-xlsx": "^0.17.1",
+    "string-hash": "^1.1.3"
   }
 }

@@ -3,6 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const converter = require('./src/convert');
 
+const defaultIgnoreFuncs = ['console.log', 'console.warn', 'console.error'];
+const defaultI18nFunc = 'window.$i18n';
 const cache = {}
 
 module.exports = function(source) {
@@ -16,10 +18,15 @@ module.exports = function(source) {
   if (cache[cacheKey]) return cache[cacheKey];
 
   log(this.resourcePath);
-  options.genKeyFunc = Array.isArray(options.genKeyFunc)
-    ? new Function(option.genKeyFunc)
-    : (option.genKeyFunc || ((_, hashKey) => `k${hashKey}`));
-  cache[cacheKey] = converter.handle(source, this.resourcePath, options);
+  const genKeyFunc = Array.isArray(options.genKeyFunc)
+    ? new Function(options.genKeyFunc)
+    : (options.genKeyFunc || ((_, hashKey) => `k${hashKey}`));
+  cache[cacheKey] = converter.handle(source, this.resourcePath, {
+    ignoreFuncs: defaultIgnoreFuncs,
+    i18nFunc: defaultI18nFunc,
+    ...options,
+    genKeyFunc,
+  });
 
   // console.log(cache[cacheKey], 'xxxxxxxxxxxxxxxxxxxxxxxx');
 

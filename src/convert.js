@@ -2,20 +2,19 @@ const parser = require('@babel/parser');
 const generate = require('@babel/generator').default;
 const traverse = require('babel-traverse').default;
 const stringHash = require('string-hash');
+const t = require('@babel/types');
 const { getParamInfo, getTemplateNode } = require('./utils/tlHelper');
 const { genFile } = require('./utils/i18nFile');
 const { isAddNode } = require('./utils/nodeHelper');
 
-const defaultIgnoreFuncs = ['console.log', 'console.warn', 'console.error'];
-const defaultI18nFunc = 'window.$i18n';
 
 const hasChinese = str => /[\u4E00-\u9FFF]+/g.test((str || '').toString());
 
-module.exports.handle = (source, file, { genKeyFunc }) => {
+module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[] }) => {
   const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
   const langs = {};
   traverse(ast, {
-    StringLiteral(path, { opts: { ignoreFuncs = defaultIgnoreFuncs, i18nFunc = defaultI18nFunc, includes=[], excludes=[] } }) {
+    StringLiteral(path) {
       if (!shoudHandle(file, includes, excludes)) return;
 
       const paramStr = path.node.value;
@@ -28,18 +27,18 @@ module.exports.handle = (source, file, { genKeyFunc }) => {
       if (isAddNode(path.parent)) {
         const { tlNode, rootPath } = handleAddOperator(path);
         const result = getParamInfo(tlNode);
-        const hashKey = genKey(result.paramStr, stringHash(result.paramStr).toString());
+        const hashKey = genKeyFunc(result.paramStr, stringHash(result.paramStr).toString());
         langs[hashKey] = result.paramStr;
         replaceNode(rootPath, i18nFunc, { key: hashKey, paramNode: result.paramNode, paramStr: result.paramStr });
         return;
       }
 
-      const hashKey = genKey(paramStr, stringHash(paramStr).toString());
+      const hashKey = genKeyFunc(paramStr, stringHash(paramStr).toString());
       langs[hashKey] = paramStr;
       replaceNode(path, i18nFunc, { key: hashKey, paramNode: t.ObjectExpression([]), paramStr });
     },
 
-    TemplateLiteral(path, { opts: { ignoreFuncs = defaultIgnoreFuncs, i18nFunc = defaultI18nFunc, includes=[], excludes=[] } }) {
+    TemplateLiteral(path) {
       if (!shoudHandle(file, includes, excludes)) return;
       const { paramStr, paramNode } = getParamInfo(path.node);
       if (!hasChinese(paramStr)) return;
@@ -48,7 +47,7 @@ module.exports.handle = (source, file, { genKeyFunc }) => {
       if (ignoreFuncs.includes(funcName)) return;
       if (funcName === i18nFunc) return;
 
-      const hashKey = genKey(paramStr, stringHash(paramStr).toString());
+      const hashKey = genKeyFunc(paramStr, stringHash(paramStr).toString());
 
       langs[hashKey] = paramStr;
       replaceNode(path, i18nFunc, { key: hashKey, paramNode, paramStr });
