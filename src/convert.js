@@ -12,7 +12,7 @@ const allLangs = {};
 const hasChinese = str => /[\u4E00-\u9FFF]+/g.test((str || '').toString());
 
 module.exports.handle = (source, file, {
-  genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[], fileType = 'xlsx', filePath
+  genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[], fileType, filePath
 }) => {
   const langs = {};
   const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
