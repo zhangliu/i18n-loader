@@ -28,8 +28,6 @@ module.exports = function(source) {
     genKeyFunc,
   });
 
-  // console.log(cache[cacheKey], 'xxxxxxxxxxxxxxxxxxxxxxxx');
-
   return cache[cacheKey];
 }
 

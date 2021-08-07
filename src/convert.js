@@ -3,16 +3,19 @@ const generate = require('@babel/generator').default;
 const traverse = require('babel-traverse').default;
 const stringHash = require('string-hash');
 const t = require('@babel/types');
+const package = require('../package.json');
 const { getParamInfo, getTemplateNode } = require('./utils/tlHelper');
 const { genFile } = require('./utils/i18nFile');
 const { isAddNode } = require('./utils/nodeHelper');
 
-
+const allLangs = {};
 const hasChinese = str => /[\u4E00-\u9FFF]+/g.test((str || '').toString());
 
-module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[] }) => {
-  const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
+module.exports.handle = (source, file, {
+  genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[], fileType = 'xlsx', filePath
+}) => {
   const langs = {};
+  const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
   traverse(ast, {
     StringLiteral(path) {
       if (!shoudHandle(file, includes, excludes)) return;
@@ -54,10 +57,12 @@ module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, incl
     },
   });
 
-  console.log(langs, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-  // genFile(fileType, filePath, langs).catch(error => {
-  //   console.error(`[${pluginName}] 文件 ${file} 国际化失败！${error.message || ''}`);
-  // });
+  if (Object.keys(langs).length <= 0) return source;
+
+  Object.assign(allLangs, langs);
+  genFile(fileType, filePath, allLangs).catch(error => {
+    console.error(`[${package.name}] 文件 ${file} 国际化失败！${error.message || ''}`);
+  });
   const newSource = generate(ast);
   return newSource.code;
 };
