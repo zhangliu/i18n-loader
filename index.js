@@ -9,9 +9,7 @@ const cache = {}
 
 module.exports = function(source) {
   const options = loaderUtils.getOptions(this) || {};
-  const regs = options.tests || [/.*/];
-  const isMatch = regs.find(reg => reg.test(this.resourcePath));
-  if (!isMatch) return source;
+  if (!match(this.resourcePath, options.includes, options.excludes)) return source;
 
   const mTime = fs.statSync(this.resourcePath).mtime;
   const cacheKey = `${this.resourcePath}@${mTime}`;
@@ -29,6 +27,21 @@ module.exports = function(source) {
   });
 
   return cache[cacheKey];
+}
+
+const match = (file, includes = [], excludes = []) => {
+  if (getAbsPath(excludes).find(i => file.startsWith(i))) return false;
+  if (!includes || includes.length <= 0) return true;
+
+  return getAbsPath(includes).find(i => file.startsWith(i));
+}
+
+function getAbsPath(files) {
+  return (files || []).map(file => {
+    const rootPath = process.cwd();
+    const isAbs = file.startsWith(rootPath);
+    return isAbs ? file : path.join(rootPath, file);
+  })
 }
 
 const log = (resourcePath) => {

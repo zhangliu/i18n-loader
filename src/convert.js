@@ -12,14 +12,12 @@ const allLangs = {};
 const hasChinese = str => /[\u4E00-\u9FFF]+/g.test((str || '').toString());
 
 module.exports.handle = (source, file, {
-  genKeyFunc, ignoreFuncs, i18nFunc, includes=[], excludes=[], fileType, filePath
+  genKeyFunc, ignoreFuncs, i18nFunc, fileType, filePath
 }) => {
   const langs = {};
   const ast = parser.parse(source, { allowImportExportEverywhere: true, plugins: ['classProperties', 'decorators-legacy'] });
   traverse(ast, {
     StringLiteral(path) {
-      if (!shoudHandle(file, includes, excludes)) return;
-
       const paramStr = path.node.value;
       if (!hasChinese(paramStr)) return;
 
@@ -42,7 +40,6 @@ module.exports.handle = (source, file, {
     },
 
     TemplateLiteral(path) {
-      if (!shoudHandle(file, includes, excludes)) return;
       const { paramStr, paramNode } = getParamInfo(path.node);
       if (!hasChinese(paramStr)) return;
       
@@ -66,21 +63,6 @@ module.exports.handle = (source, file, {
   const newSource = generate(ast);
   return newSource.code;
 };
-
-function shoudHandle(filename = '', includes = [], excludes = []) {
-  if (getAbsPath(excludes).find(i => filename.startsWith(i))) return false;
-  if (!includes || includes.length <= 0) return true;
-
-  return getAbsPath(includes).find(i => filename.startsWith(i));
-}
-
-function getAbsPath(files) {
-  return (files || []).map(file => {
-    const rootPath = process.cwd();
-    const isAbs = file.startsWith(rootPath);
-    return isAbs ? file : path.join(rootPath, file);
-  })
-}
 
 function getFuncName(path, dept = 2) {
   let index = 0;
