@@ -15,7 +15,7 @@ module.exports = function(source) {
   const cacheKey = `${this.resourcePath}@${mTime}`;
   if (cache[cacheKey]) return cache[cacheKey];
 
-  log(this.resourcePath);
+  // log(this.resourcePath);
   const genKeyFunc = Array.isArray(options.genKeyFunc)
     ? new Function(options.genKeyFunc)
     : (options.genKeyFunc || ((_, hashKey) => `k${hashKey}`));

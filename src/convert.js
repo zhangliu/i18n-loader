@@ -131,7 +131,8 @@ const uploadStarling = (langs) => {
   clearTimeout(uploadTimer);
   return new Promise(r => {
     uploadTimer = setTimeout(() => {
-      console.log('will upload to starling:', langs, '***********************');
+      // console.log('i18n convert over!:', langs, '***********************');
+      console.log('i18n convert over!');
       r();
     }, 3000);
   })
