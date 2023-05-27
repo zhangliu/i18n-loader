@@ -1,6 +1,6 @@
 const parser = require('@babel/parser');
 const generate = require('@babel/generator').default;
-const traverse = require('babel-traverse').default;
+const traverse = require('@babel/traverse').default;
 const stringHash = require('string-hash');
 const t = require('@babel/types');
 const package = require('../package.json');
