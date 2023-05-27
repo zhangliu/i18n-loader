@@ -6,7 +6,7 @@ const xlsx = require('node-xlsx');
 const WAIT_TIME = 20 * 1000;
 // const lockLimit = 2000;
 
-const genFile = async (fileType = 'xlsx', filePath = '.', langs) => {
+const genFile = async (fileType = 'json', filePath = '.', langs) => {
   const i18nFile = path.join(filePath, `./i18n.${fileType}`);
   const type = (fileType || '').toLowerCase();
   // json 文件

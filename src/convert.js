@@ -16,7 +16,7 @@ module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, file
   const langs = {};
   const ast = parser.parse(source, {
     allowImportExportEverywhere: true,
-    plugins: ['classProperties', 'decorators-legacy']
+    plugins: ['classProperties', 'decorators-legacy', 'jsx', 'typescript']
   });
 
   traverse(ast, {
@@ -59,7 +59,6 @@ module.exports.handle = (source, file, { genKeyFunc, ignoreFuncs, i18nFunc, file
 
   if (Object.keys(langs).length <= 0) return source;
   
-  uploadStarling(allLangs);
   Object.assign(allLangs, langs);
   genFile(fileType, filePath, allLangs).catch(error => {
     console.error(`[${package.name}] 文件 ${file} 国际化失败！${error.message || ''}`);
@@ -125,15 +124,4 @@ const replaceNode = (path, i18nFunc, { key, paramNode, paramStr }) => {
   }
 
   path.parent[path.parentKey] = node;
-}
-
-const uploadStarling = (langs) => {
-  clearTimeout(uploadTimer);
-  return new Promise(r => {
-    uploadTimer = setTimeout(() => {
-      // console.log('i18n convert over!:', langs, '***********************');
-      console.log('i18n convert over!');
-      r();
-    }, 3000);
-  })
 }
