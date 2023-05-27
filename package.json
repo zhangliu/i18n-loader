@@ -17,7 +17,7 @@
     "@babel/traverse": "^7.22.1",
     "@babel/types": "^7.22.3",
     "loader-utils": "^2.0.0",
-    "node-xlsx": "^0.17.1",
+    "node-xlsx": "^0.4.0",
     "string-hash": "^1.1.3"
   }
 }
