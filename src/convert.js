@@ -109,7 +109,7 @@ const replaceNode = (path, i18nFunc, { key, paramNode, paramStr }) => {
 
   let node = t.callExpression(
     t.identifier(i18nFunc),
-    [t.StringLiteral(key), paramNode, t.StringLiteral(paramStr)]
+    [t.StringLiteral(key), t.StringLiteral(paramStr), paramNode]
   );
 
   if (Array.isArray(path.parent[path.parentKey])) {

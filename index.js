@@ -16,14 +16,11 @@ module.exports = function(source) {
   if (cache[cacheKey]) return cache[cacheKey];
 
   // log(this.resourcePath);
-  const genKeyFunc = Array.isArray(options.genKeyFunc)
-    ? new Function(options.genKeyFunc)
-    : (options.genKeyFunc || ((_, hashKey) => `k${hashKey}`));
   cache[cacheKey] = converter.handle(source, this.resourcePath, {
     ignoreFuncs: defaultIgnoreFuncs,
     i18nFunc: defaultI18nFunc,
     ...options,
-    genKeyFunc,
+    genKeyFunc: key => key,
   });
 
   return cache[cacheKey];
