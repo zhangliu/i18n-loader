@@ -1,5 +1,5 @@
 # i18n loader
-用于替代国际化 babel 插件：https://bytedance.feishu.cn/docs/doccn3YLD0BEzubZWMxUDXSAgah。
+国际化 loader
 
 # 用法：
 ```javascript

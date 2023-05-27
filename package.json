@@ -1,5 +1,5 @@
 {
-  "name": "@byted/i18n-loader",
+  "name": "@zhangliu/i18n-loader",
   "version": "1.0.3",
   "description": "",
   "main": "index.js",
@@ -7,16 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "git@code.byted.org:cloud-fe/i18n-loader.git"
+    "type": "git"
   },
-  "author": "zhangyunnian@bytedance.net",
+  "author": "zhangliu",
   "license": "ISC",
   "dependencies": {
-    "@babel/generator": "^7.15.0",
-    "@babel/parser": "^7.15.0",
-    "@babel/types": "^7.15.0",
-    "babel-traverse": "^6.26.0",
+    "@babel/generator": "^7.22.3",
+    "@babel/parser": "^7.22.3",
+    "@babel/traverse": "^7.22.1",
+    "@babel/types": "^7.22.3",
     "loader-utils": "^2.0.0",
     "node-xlsx": "^0.17.1",
     "string-hash": "^1.1.3"
